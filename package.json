@@ -1,0 +1,28 @@
+{
+  "name": "crawlers",
+  "version": "1.0.0",
+  "description": "crawlers",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest",
+    "start": "nodemon src/app.js"
+  },
+  "keywords": [
+    "crawler",
+    "crawlers",
+    "poem",
+    "car"
+  ],
+  "author": "nguyenhoangtin291",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
+    "cheerio": "^1.0.0-rc.5",
+    "express": "^4.17.1",
+    "swagger-ui-express": "^4.1.6"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
