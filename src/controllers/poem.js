@@ -7,6 +7,7 @@ const constants = require('../constants');
 const crawl = async (req, res, next) => {
     try {
         const { query: { url } } = req;
+        // TODO: Should apply request validation middleware
         if (!url) {
             throw new Error('The "url" parameter is required!')
         }
