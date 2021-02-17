@@ -13,8 +13,7 @@ module.exports = function (app) {
     app.get(
         '/poem/crawl',
         [
-            //check('url').exists().withMessage("The 'url' parameter is required!"),
-            query('url', "The 'url' parameter is required!").exists(),
+            query('site', "The 'site' parameter is required!").exists(),
         ],
         poem_controller.crawl
     );

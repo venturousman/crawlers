@@ -16,13 +16,16 @@ const crawl = async (req, res, next) => {
             return;
         }
 
-        const { query: { url } } = req;
+        const { query: { site } } = req;
 
-        let result = '';
-        if (url.includes(constants.SITES.THIVIEN)) {
-            result = await poem_service.crawl_thiviennet(url);
+        switch (site) {
+            case constants.SITES.THIVIEN:
+                poem_service.crawl_thiviennet();
+                break;
+            default:
+                break;
         }
-        return res.status(200).json(result);
+        return res.status(200);
     } catch (error) {
         return next(error);
     }

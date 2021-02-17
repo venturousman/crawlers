@@ -2,7 +2,7 @@
 
 module.exports = Object.freeze({
     SITES: {
-        THIVIEN: 'https://www.thivien.net/' ,
+        THIVIEN: 'thivien' ,
         ANOTHER_SITE: 'https://www.anothersite.com/',
     },
     ANOTHER_CONSTANT: 'another value'

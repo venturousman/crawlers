@@ -2,42 +2,77 @@
 
 const axios = require('axios');
 const cheerio = require('cheerio');
+const Crawler = require("crawler");
 const constants = require('../constants');
 
-const crawl_thiviennet = async (url) => {
+const crawl_thiviennet = () => {
     try {
-        const encoded_url = encodeURI(url);
-        const { data: html } = await axios.get(encoded_url);
-        const $ = await cheerio.load(html);
-
-        let poems = [];
-        const poem_links = $('div.poem-group-list a');
-        poem_links.each(async (index, el) => {
-            debugger
-            const el_url = constants.SITES.THIVIEN + el.attribs.href;
-            const poem = await get_poem(el_url);
-            poems.push(poem);
+        const poems = [];
+        const c = new Crawler({
+            maxConnections: 1,
+            rateLimit: 2000,    // in milliseconds
+            // This will be called for each crawled page
+            callback: function (error, res, done) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    const $ = res.$;
+                    // $ is Cheerio by default
+                    //a lean implementation of core jQuery designed specifically for the server
+                    const author_tags = $('div.list-item h4.list-item-header a');
+                    const author_links = author_tags
+                        .map((index, el) => {
+                            const author = $(el).text();
+                            return {
+                                uri: `${res.request.uri.protocol}//${res.request.host}${el.attribs.href}`,
+                                callback: function (error, res, done1) {
+                                    if (error) {
+                                        console.log(error);
+                                    } else {
+                                        const $ = res.$;
+                                        const poem_tags = $('div.poem-group-list a');
+                                        const poem_links = poem_tags
+                                            .map((index, el) => {
+                                                const title = $(el).text();
+                                                return {
+                                                    uri: `${res.request.uri.protocol}//${res.request.host}${el.attribs.href}`,
+                                                    callback: function (error, res, done2) {
+                                                        if (error) {
+                                                            console.log(error);
+                                                        } else {
+                                                            const $ = res.$;
+                                                            const content = $('div.poem-content p:nth-child(1)').html();
+                                                            poems.push({ author, title, content });
+                                                        }
+                                                        done2();
+                                                    }
+                                                };
+                                            })
+                                            .toArray();
+                                        c.queue(poem_links);
+                                    }
+                                    done1();
+                                }
+                            }
+                        })
+                        .toArray();
+                    c.queue(author_links);
+                }
+                done();
+            }
         });
 
-        return poems;
+        c.queue('https://www.thivien.net/searchauthor.php?Page=1');
+
+        c.on('drain', function () {
+            console.log('crawling is done');
+            console.log(poems);
+        });
     } catch (error) {
         throw error;
     }
 };
 
-const get_poem = async (url) => {
-    let content = '';
-    let title = ''; // TODO
-    try {
-        const { data: html } = await axios.get(url);
-        const $ = await cheerio.load(html);
-        content = $('div.poem-content p:nth-child(1)').html();
-    } catch (error) {
-        console.log('get_poem_content', error);
-    }
-    return { title, content };
-};
-
 module.exports = {
-    crawl_thiviennet
+    crawl_thiviennet,
 };
