@@ -13,10 +13,6 @@ const app = express();  // create a new app
 
 // === configure middleware modules
 app.use('/api-docs', swagger.serve, swagger.setup(apiDocument));
-// http://expressjs.com/en/api.html#app.all
-app.all('/', (req, res) => {
-    res.redirect('/api-docs');
-});
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -25,6 +21,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // === configure routes, should be configured after bodyParser configuration 
+// http://expressjs.com/en/api.html#app.all
+app.all('/', (req, res) => {
+    res.redirect('/api-docs');
+});
+
 routes(app);
 
 // catch all routes
