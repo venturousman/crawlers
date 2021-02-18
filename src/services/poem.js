@@ -1,9 +1,6 @@
 'use strict';   // to enforce secure coding practices
 
-const axios = require('axios');
-const cheerio = require('cheerio');
 const Crawler = require("crawler");
-const constants = require('../constants');
 
 // https://github.com/bda-research/node-crawler/issues/259
 const crawl_thiviennet_async = async () => {
