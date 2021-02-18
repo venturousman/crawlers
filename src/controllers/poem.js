@@ -17,15 +17,18 @@ const crawl = async (req, res, next) => {
         }
 
         const { query: { site } } = req;
+        let poems = [];
 
         switch (site) {
             case constants.SITES.THIVIEN:
-                poem_service.crawl_thiviennet();
+                // poem_service.crawl_thiviennet();
+                poems = await poem_service.crawl_thiviennet_async();
                 break;
             default:
                 break;
         }
-        return res.status(200);
+        // return res.status(200);
+        return res.status(200).json(poems);
     } catch (error) {
         return next(error);
     }
