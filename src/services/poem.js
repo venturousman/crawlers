@@ -1,7 +1,9 @@
 'use strict';   // to enforce secure coding practices
 
 const Crawler = require("crawler");
+const entities = require("entities");
 
+// https://node-crawler.readthedocs.io/zh_CN/latest/quick_start/
 // https://github.com/bda-research/node-crawler/issues/259
 const crawl_thiviennet_async = async () => {
     const poems = [];
@@ -35,7 +37,8 @@ const crawl_thiviennet_async = async () => {
                     .map(async (index, el) => {
                         const title = res1.$(el).text();
                         const res2 = await crawlerPromise({ uri: `${res1.request.uri.protocol}//${res1.request.host}${el.attribs.href}` });
-                        const content = res2.$('div.poem-content p:nth-child(1)').html();
+                        const html_content = res2.$('div.poem-content p:nth-child(1)').html();
+                        const content = entities.decodeHTML(html_content);
                         poems.push({ author, title, content });
                     })
                     .toArray();
